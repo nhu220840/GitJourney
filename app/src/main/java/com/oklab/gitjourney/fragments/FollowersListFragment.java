@@ -3,13 +3,13 @@ package com.oklab.gitjourney.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +42,9 @@ public class FollowersListFragment extends Fragment implements UserProfileAsyncT
     private int currentPage = 1;
     private boolean followersExhausted = false;
     private boolean loading = false;
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(this);
+    }
     private int count = 0;
 
     public FollowersListFragment() {
@@ -82,7 +85,7 @@ public class FollowersListFragment extends Fragment implements UserProfileAsyncT
         loading = true;
         Bundle bundle = new Bundle();
         bundle.putInt("page", currentPage++);
-        getLoaderManager().initLoader(0, bundle, new FollowersListFragment.FollowersLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new FollowersListFragment.FollowersLoaderCallbacks());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -121,7 +124,7 @@ public class FollowersListFragment extends Fragment implements UserProfileAsyncT
         currentPage = 1;
         Bundle bundle = new Bundle();
         bundle.putInt("page", currentPage++);
-        getLoaderManager().initLoader(0, bundle, new FollowersListFragment.FollowersLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new FollowersListFragment.FollowersLoaderCallbacks());
     }
 
     @Override
@@ -165,7 +168,7 @@ public class FollowersListFragment extends Fragment implements UserProfileAsyncT
                 loading = true;
                 Bundle bundle = new Bundle();
                 bundle.putInt("page", currentPage++);
-                getLoaderManager().initLoader(0, bundle, new FollowersListFragment.FollowersLoaderCallbacks());
+                loaderManager().initLoader(0, bundle, new FollowersListFragment.FollowersLoaderCallbacks());
             }
         }
     }
@@ -183,7 +186,7 @@ public class FollowersListFragment extends Fragment implements UserProfileAsyncT
             loading = false;
             if (followersDataEntryList != null && followersDataEntryList.isEmpty()) {
                 followersExhausted = true;
-                getLoaderManager().destroyLoader(loader.getId());
+                loaderManager().destroyLoader(loader.getId());
                 return;
             }
             Parser<GitHubUserProfileDataEntry> parser = new GitHubUserProfileDataParser();
@@ -193,7 +196,7 @@ public class FollowersListFragment extends Fragment implements UserProfileAsyncT
                 new UserProfileAsyncTask<GitHubUserProfileDataEntry>(getContext(), FollowersListFragment.this, parser).execute(entry.getLogin());
             }
             swipeRefreshLayout.setRefreshing(false);
-            getLoaderManager().destroyLoader(loader.getId());
+            loaderManager().destroyLoader(loader.getId());
         }
 
         @Override

@@ -2,7 +2,7 @@ package com.oklab.gitjourney.asynctasks;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.loader.content.AsyncTaskLoader;
 import android.util.Log;
 
 import com.oklab.gitjourney.R;

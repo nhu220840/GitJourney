@@ -3,13 +3,13 @@ package com.oklab.gitjourney.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +43,9 @@ public class FollowingListFragment extends Fragment implements UserProfileAsyncT
     private int currentPage = 1;
     private boolean followingExhausted = false;
     private boolean loading = false;
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(this);
+    }
 
     public FollowingListFragment() {
     }
@@ -82,7 +85,7 @@ public class FollowingListFragment extends Fragment implements UserProfileAsyncT
         loading = true;
         Bundle bundle = new Bundle();
         bundle.putInt("page", currentPage++);
-        getLoaderManager().initLoader(0, bundle, new FollowingLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new FollowingLoaderCallbacks());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -123,7 +126,7 @@ public class FollowingListFragment extends Fragment implements UserProfileAsyncT
         currentPage = 1;
         Bundle bundle = new Bundle();
         bundle.putInt("page", currentPage++);
-        getLoaderManager().initLoader(0, bundle, new FollowingLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new FollowingLoaderCallbacks());
     }
 
     @Override
@@ -164,7 +167,7 @@ public class FollowingListFragment extends Fragment implements UserProfileAsyncT
                 loading = true;
                 Bundle bundle = new Bundle();
                 bundle.putInt("page", currentPage++);
-                getLoaderManager().initLoader(0, bundle, new FollowingLoaderCallbacks());
+                loaderManager().initLoader(0, bundle, new FollowingLoaderCallbacks());
             }
         }
     }
@@ -182,7 +185,7 @@ public class FollowingListFragment extends Fragment implements UserProfileAsyncT
             loading = false;
             if (followingDataEntryList != null && followingDataEntryList.isEmpty()) {
                 followingExhausted = true;
-                getLoaderManager().destroyLoader(loader.getId());
+                loaderManager().destroyLoader(loader.getId());
                 return;
             }
             Parser<GitHubUserProfileDataEntry> parser = new GitHubUserProfileDataParser();
@@ -192,7 +195,7 @@ public class FollowingListFragment extends Fragment implements UserProfileAsyncT
                 new UserProfileAsyncTask<GitHubUserProfileDataEntry>(getContext(), FollowingListFragment.this, parser).execute(entry.getLogin());
             }
             swipeRefreshLayout.setRefreshing(false);
-            getLoaderManager().destroyLoader(loader.getId());
+            loaderManager().destroyLoader(loader.getId());
         }
 
         @Override

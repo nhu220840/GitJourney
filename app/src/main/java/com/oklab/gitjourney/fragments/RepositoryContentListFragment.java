@@ -1,12 +1,12 @@
 package com.oklab.gitjourney.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +37,9 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
     private RepoContentListAdapter repoContentListAdapter;
     private LinearLayoutManager linearLayoutManager;
     private RepoContentFragmentInteractionListener repoContentChangedlistner;
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(this);
+    }
 
     public RepositoryContentListFragment() {
     }
@@ -75,7 +78,7 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
         recyclerView.setLayoutManager(linearLayoutManager);
         repoContentListAdapter = new RepoContentListAdapter(this.getContext(), this);
         recyclerView.setAdapter(repoContentListAdapter);
-        getLoaderManager().initLoader(0, getArguments(), callbacks);
+        loaderManager().initLoader(0, getArguments(), callbacks);
     }
 
     @Override
@@ -89,7 +92,7 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
                 repoContentListAdapter.resetAllData();
                 pathStack.push(args.getString("path"));
                 args.putString("path", entry.getPath());
-                getLoaderManager().initLoader(0, args, callbacks);
+                loaderManager().initLoader(0, args, callbacks);
                 break;
             case EMPTY:
                 Log.v(TAG, "EMPTY");
@@ -97,7 +100,7 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
                 repoContentChangedlistner.onPathChanged(newPath);
                 repoContentListAdapter.resetAllData();
                 args.putString("path", newPath);
-                getLoaderManager().initLoader(0, args, callbacks);
+                loaderManager().initLoader(0, args, callbacks);
                 break;
             case README:
             case FILE:
@@ -107,7 +110,7 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
                 pathStack.push(args.getString("path"));
                 Bundle argsFileContent = new Bundle();
                 argsFileContent.putString("download_uri", entry.getUri());
-                getLoaderManager().initLoader(1, argsFileContent, fileContentLoadedCallbacks);
+                loaderManager().initLoader(1, argsFileContent, fileContentLoadedCallbacks);
                 break;
             default:
                 break;
@@ -124,7 +127,7 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
         repoContentListAdapter.resetAllData();
         Bundle args = getArguments();
         args.putString("path", newPath);
-        getLoaderManager().initLoader(0, args, callbacks);
+        loaderManager().initLoader(0, args, callbacks);
         return true;
     }
 
@@ -149,7 +152,7 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
             } else {
                 Toast.makeText(getContext(), "Repo content loading failed", Toast.LENGTH_LONG).show();
             }
-            getLoaderManager().destroyLoader(loader.getId());
+            loaderManager().destroyLoader(loader.getId());
         }
 
         @Override
@@ -172,7 +175,7 @@ public class RepositoryContentListFragment extends Fragment implements RepoConte
                 codeView.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
             }
-            getLoaderManager().destroyLoader(loader.getId());
+            loaderManager().destroyLoader(loader.getId());
         }
 
         @Override

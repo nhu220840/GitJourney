@@ -3,10 +3,10 @@ package com.oklab.gitjourney.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +37,9 @@ public class MainViewFragment extends Fragment implements LoaderManager.LoaderCa
     private ScrollView scrollView;
     private Calendar calendar = (Calendar) Calendar.getInstance().clone();
     private TextView monthTitle;
-
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(this);
+    }
 
     public MainViewFragment() {
         setRetainInstance(true);
@@ -59,7 +61,7 @@ public class MainViewFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, this);
+        loaderManager().initLoader(0, null, this);
     }
 
     @Override

@@ -6,9 +6,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -48,6 +48,9 @@ public class LocationsReadyCallback implements OnMapReadyCallback, UserProfileAs
     private ArrayList<GitHubUserLocationDataEntry> locationsDataList;
     private LocationsReadyCallback.AddressResultReceiver mResultReceiver;
     private GoogleMap map;
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(activity);
+    }
     private ArrayList<Target> targets;
 
     public LocationsReadyCallback(AppCompatActivity activity) {
@@ -59,7 +62,7 @@ public class LocationsReadyCallback implements OnMapReadyCallback, UserProfileAs
         Log.v(TAG, "onMapReady");
         Bundle bundle = new Bundle();
         bundle.putInt("page", 1);
-        activity.getSupportLoaderManager().initLoader(0, bundle, new LocationsReadyCallback.FollowersListLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new LocationsReadyCallback.FollowersListLoaderCallbacks());
         mResultReceiver = new LocationsReadyCallback.AddressResultReceiver(new Handler());
         map = googleMap;
     }
@@ -149,7 +152,7 @@ public class LocationsReadyCallback implements OnMapReadyCallback, UserProfileAs
         @Override
         public void onLoadFinished(Loader<List<GitHubUsersDataEntry>> loader, List<GitHubUsersDataEntry> DataEntryList) {
             if (DataEntryList != null && DataEntryList.isEmpty()) {
-                activity.getSupportLoaderManager().destroyLoader(loader.getId());
+                loaderManager().destroyLoader(loader.getId());
                 return;
             }
             if (loader.getId() == 0) {
@@ -157,7 +160,7 @@ public class LocationsReadyCallback implements OnMapReadyCallback, UserProfileAs
                 Log.v(TAG, "followersLocationsList = " + followersLocationsList.size());
                 Bundle bundle = new Bundle();
                 bundle.putInt("page", 1);
-                activity.getSupportLoaderManager().initLoader(1, bundle, new LocationsReadyCallback.FollowersListLoaderCallbacks());
+                loaderManager().initLoader(1, bundle, new LocationsReadyCallback.FollowersListLoaderCallbacks());
             } else {
                 followingsLocationsList = DataEntryList != null ? DataEntryList : Collections.emptyList();
                 HashSet<String> set = new HashSet<>();

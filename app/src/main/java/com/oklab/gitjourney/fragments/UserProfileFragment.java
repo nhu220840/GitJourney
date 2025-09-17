@@ -2,13 +2,13 @@ package com.oklab.gitjourney.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +45,9 @@ public class UserProfileFragment extends Fragment implements SwipeRefreshLayout.
     private boolean loading = false;
     private GitHubUserProfileDataEntry entry;
     private GridLayoutManager gridLayoutManager;
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(this);
+    }
 
     public UserProfileFragment() {
     }
@@ -84,7 +87,7 @@ public class UserProfileFragment extends Fragment implements SwipeRefreshLayout.
         Bundle bundle = new Bundle();
         bundle.putInt("page", currentPage++);
         bundle.putString("login", entry.getLogin());
-        getLoaderManager().initLoader(0, bundle, new UserProfileFragment.ReposLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new UserProfileFragment.ReposLoaderCallbacks());
     }
 
     @Override
@@ -99,7 +102,7 @@ public class UserProfileFragment extends Fragment implements SwipeRefreshLayout.
         Bundle bundle = new Bundle();
         bundle.putInt("page", currentPage++);
         bundle.putString("login", entry.getLogin());
-        getLoaderManager().initLoader(0, bundle, new UserProfileFragment.ReposLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new UserProfileFragment.ReposLoaderCallbacks());
     }
 
     private void populateUserProfileData() {
@@ -132,7 +135,7 @@ public class UserProfileFragment extends Fragment implements SwipeRefreshLayout.
                 Bundle bundle = new Bundle();
                 bundle.putInt("page", currentPage++);
                 bundle.putString("login", entry.getLogin());
-                getLoaderManager().initLoader(0, bundle, new UserProfileFragment.ReposLoaderCallbacks());
+                loaderManager().initLoader(0, bundle, new UserProfileFragment.ReposLoaderCallbacks());
             }
         }
     }
@@ -157,11 +160,11 @@ public class UserProfileFragment extends Fragment implements SwipeRefreshLayout.
             loading = false;
             if (reposDataEntryList != null && reposDataEntryList.isEmpty()) {
                 reposExhausted = true;
-                getLoaderManager().destroyLoader(loader.getId());
+                loaderManager().destroyLoader(loader.getId());
                 return;
             }
             userProfileDetailAdapter.addAll(reposDataEntryList);
-            getLoaderManager().destroyLoader(loader.getId());
+            loaderManager().destroyLoader(loader.getId());
         }
 
         @Override

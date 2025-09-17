@@ -1,13 +1,13 @@
 package com.oklab.gitjourney.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,6 +39,10 @@ public class PersonalActivity extends AppCompatActivity implements UserProfileAs
     private boolean reposExhausted = false;
     private boolean loading = false;
     private GridLayoutManager gridLayoutManager;
+
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +88,7 @@ public class PersonalActivity extends AppCompatActivity implements UserProfileAs
         Bundle bundle = new Bundle();
         bundle.putInt("page", currentPage++);
         bundle.putString("login", dataEntry.getLogin());
-        getSupportLoaderManager().initLoader(0, bundle, new ReposLoaderCallbacks());
+        loaderManager().initLoader(0, bundle, new ReposLoaderCallbacks());
     }
 
     private void populateUserProfileData() {
@@ -92,7 +96,7 @@ public class PersonalActivity extends AppCompatActivity implements UserProfileAs
         followers.setText(String.format(Locale.getDefault(), "%d", entry.getFollowers()));
         following.setText(String.format(Locale.getDefault(), "%d", entry.getFollowing()));
 
-        Picasso pic = Picasso.with(this);
+        Picasso pic = Picasso.get();
         if (entry.getImageUri() == null || entry.getImageUri().isEmpty()) {
             pic.load(R.drawable.octocat)
                     .fit().centerCrop()
@@ -118,7 +122,7 @@ public class PersonalActivity extends AppCompatActivity implements UserProfileAs
                 Bundle bundle = new Bundle();
                 bundle.putInt("page", currentPage++);
                 bundle.putString("login", entry.getLogin());
-                getSupportLoaderManager().initLoader(0, bundle, new ReposLoaderCallbacks());
+                loaderManager().initLoader(0, bundle, new ReposLoaderCallbacks());
             }
         }
     }
@@ -135,11 +139,11 @@ public class PersonalActivity extends AppCompatActivity implements UserProfileAs
             loading = false;
             if (reposDataEntryList != null && reposDataEntryList.isEmpty()) {
                 reposExhausted = true;
-                getLoaderManager().destroyLoader(loader.getId());
+                loaderManager().destroyLoader(loader.getId());
                 return;
             }
             userProfileDetailAdapter.addAll(reposDataEntryList);
-            getLoaderManager().destroyLoader(loader.getId());
+            loaderManager().destroyLoader(loader.getId());
         }
 
         @Override

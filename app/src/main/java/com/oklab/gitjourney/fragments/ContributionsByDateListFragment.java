@@ -2,13 +2,13 @@ package com.oklab.gitjourney.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +28,9 @@ import com.oklab.gitjourney.data.ContributionsDataLoader;
 public class ContributionsByDateListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = ContributionsByDateListFragment.class.getSimpleName();
     private RecyclerView recyclerView;
+    private LoaderManager loaderManager() {
+        return LoaderManager.getInstance(this);
+    }
     private SwipeRefreshLayout swipeRefreshLayout;
     private ContributionsByDateAdapter contributionsListAdapter;
 
@@ -69,13 +72,13 @@ public class ContributionsByDateListFragment extends Fragment implements LoaderM
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         swipeRefreshLayout.setOnRefreshListener(this);
-        getLoaderManager().initLoader(0, null, this);
+        loaderManager().initLoader(0, null, this);
     }
 
     @Override
     public void onRefresh() {
         recyclerView.setAdapter(null);
-        getLoaderManager().initLoader(0, null, this);
+        loaderManager().initLoader(0, null, this);
     }
 
     @Override

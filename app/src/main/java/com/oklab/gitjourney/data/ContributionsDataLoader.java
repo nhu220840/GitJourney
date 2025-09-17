@@ -2,7 +2,7 @@ package com.oklab.gitjourney.data;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v4.content.CursorLoader;
+import androidx.loader.content.CursorLoader;
 
 /**
  * Created by olgakuklina on 2017-03-19.
