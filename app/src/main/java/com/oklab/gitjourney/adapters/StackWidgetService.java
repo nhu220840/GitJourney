@@ -87,7 +87,7 @@ public class StackWidgetService extends RemoteViewsService {
 
             rv.setTextViewText(R.id.w_author_name, widgetDatas.get(position).getAuthorName());
             rv.setTextViewText(R.id.w_title, widgetDatas.get(position).getTitle());
-            Picasso pic = Picasso.with(context);
+            Picasso pic = Picasso.get();
             try {
                 Bitmap map = pic.load(widgetDatas.get(position).getAvatar()).get();
                 rv.setImageViewBitmap(R.id.w_github_user_image, map);

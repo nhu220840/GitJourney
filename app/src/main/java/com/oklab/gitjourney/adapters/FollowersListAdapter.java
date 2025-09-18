@@ -99,7 +99,7 @@ public class FollowersListAdapter extends RecyclerView.Adapter<FollowersListAdap
             } else {
                 location.setText(R.string.empty_text);
             }
-            Picasso pic = Picasso.with(context);
+            Picasso pic = Picasso.get();
             pic.load(followersDataEntry.getImageUri())
                     .fit().centerCrop()
                     .error(R.drawable.octocat)

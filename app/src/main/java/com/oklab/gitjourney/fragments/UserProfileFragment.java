@@ -110,18 +110,20 @@ public class UserProfileFragment extends Fragment implements SwipeRefreshLayout.
         followers.setText(String.format(Locale.getDefault(), "%d", entry.getFollowers()));
         following.setText(String.format(Locale.getDefault(), "%d", entry.getFollowing()));
 
-        Picasso pic = Picasso.with(this.getContext());
         if (entry.getImageUri() == null || entry.getImageUri().isEmpty()) {
-            pic.load(R.drawable.octocat)
+            Picasso.get()
+                    .load(R.drawable.octocat)
                     .fit().centerCrop()
                     .into(profilePoster);
         } else {
-            pic.load(entry.getImageUri())
+            Picasso.get()
+                    .load(entry.getImageUri())
                     .fit().centerCrop()
                     .error(R.drawable.octocat)
                     .into(profilePoster);
         }
     }
+
 
     private class UserProfileItemsListOnScrollListener extends RecyclerView.OnScrollListener {
 

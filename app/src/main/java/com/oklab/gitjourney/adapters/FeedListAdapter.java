@@ -91,7 +91,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedLi
             Calendar date = feedData.getDate();
             action_date.setText(formatter.format(date.getTime()));
 
-            Picasso pic = Picasso.with(context);
+            Picasso pic = Picasso.get();
             if (feedData.getAvatarURL() == null || feedData.getAvatarURL().isEmpty()) {
                 pic.load(R.drawable.octocat)
                         .fit().centerCrop()

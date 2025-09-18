@@ -117,8 +117,8 @@ public class LocationsReadyCallback implements OnMapReadyCallback, UserProfileAs
                             }
 
                             @Override
-                            public void onBitmapFailed(Drawable errorDrawable) {
-                                Log.v(TAG, "error onBitmapFailed");
+                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                Log.v(TAG, "error onBitmapFailed", e);
                             }
 
                             @Override
@@ -128,8 +128,7 @@ public class LocationsReadyCallback implements OnMapReadyCallback, UserProfileAs
 
                         };
                         targets.add(target);
-                        Picasso.with(activity).load(entry.getImageUri()).resize(100, 100).transform(new TransformToCircle()).into(target);
-                    }
+                        Picasso.get().load(entry.getImageUri()).resize(100, 100).transform(new TransformToCircle()).into(target);                    }
                 }
             }
         }

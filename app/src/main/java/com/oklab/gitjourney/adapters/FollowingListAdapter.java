@@ -98,7 +98,7 @@ public class FollowingListAdapter extends RecyclerView.Adapter<FollowingListAdap
             } else {
                 location.setText(R.string.empty_text);
             }
-            Picasso pic = Picasso.with(context);
+            Picasso pic = Picasso.get();
             Log.v(TAG, "path" + followingDataEntry.getImageUri());
             pic.load(followingDataEntry.getImageUri())
                     .fit().centerCrop()

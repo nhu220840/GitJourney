@@ -118,7 +118,7 @@ public class ReposListAdapter extends RecyclerView.Adapter<ReposListAdapter.Repo
             stars.setText(String.format(Locale.getDefault(), "%d", reposDataEntry.getStars()));
             forks.setText(String.format(Locale.getDefault(), "%d", reposDataEntry.getForks()));
 
-            Picasso pic = Picasso.with(context);
+            Picasso pic = Picasso.get();
             pic.load(R.drawable.repository)
                     .fit().centerCrop()
                     .error(R.drawable.octocat)

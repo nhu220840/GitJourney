@@ -123,7 +123,7 @@ public class StarsListAdapter extends RecyclerView.Adapter<StarsListAdapter.Star
             watchers.setText(String.format(Locale.getDefault(), "%d", starsDataEntry.getWatchers()));
             repoShortUri.setText(starsDataEntry.getFullName());
 
-            Picasso pic = Picasso.with(context);
+            Picasso pic = Picasso.get();
             pic.load(R.drawable.repository)
                     .fit().centerCrop()
                     .error(R.drawable.octocat)
