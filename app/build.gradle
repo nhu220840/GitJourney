@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    namespace "com.oklab.githubjourney"
+    namespace "com.oklab.gitjourney"
 
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.oklab.githubjourney"
+        namespace "com.oklab.gitjourney"
         minSdk 22
         targetSdk 34
         versionCode 6
@@ -17,6 +17,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+        resValue "string", "client_id", (project.findProperty("GITHUB_CLIENT_ID") ?: "")
+        resValue "string", "client_secret", (project.findProperty("GITHUB_CLIENT_SECRET") ?: "")
+        resValue "string", "note", (project.findProperty("GITHUB_OAUTH_NOTE") ?: "GitJourney OAuth Login")
     }
 
     signingConfigs {
