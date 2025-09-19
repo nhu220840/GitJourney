@@ -62,13 +62,17 @@ public class MainActivity extends AppCompatActivity
         ContributionsByDateListFragment contributionsActivityFragment = ContributionsByDateListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.contrib_fragment, contributionsActivityFragment).commit();
         prefs = this.getSharedPreferences(Utils.SHARED_PREF_NAME, 0);
-        String currentSessionData = prefs.getString("userSessionData", null);
-        if (currentSessionData == null) {
-            Intent intent = new Intent(this, AuthenticationActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
+        SharedPreferences.Editor editor = prefs.edit();
+//        String currentSessionData = prefs.getString("userSessionData", null);
+        String mockSessionData = "123;dummy_credentials;dummy_token;dummy_user";
+        editor.putString("userSessionData", mockSessionData);
+        editor.apply();
+//        if (currentSessionData == null) {
+//            Intent intent = new Intent(this, AuthenticationActivity.class);
+//            startActivity(intent);
+//            finish();
+//            return;
+//        }
         this.startService(new Intent(this, UpdaterService.class));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

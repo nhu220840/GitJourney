@@ -51,6 +51,7 @@ public class ContributionsAsyncTask extends AsyncTask<Integer, Void, List<Contri
             connect.setRequestMethod("GET");
             String authentication = "token " + currentSessionData.getToken();
             connect.setRequestProperty("Authorization", authentication);
+            connect.setRequestProperty("User-Agent", Utils.USER_AGENT);
 
             connect.connect();
             int responseCode = connect.getResponseCode();

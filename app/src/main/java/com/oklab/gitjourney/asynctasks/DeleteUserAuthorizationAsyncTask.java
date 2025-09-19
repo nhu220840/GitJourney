@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.oklab.gitjourney.R;
@@ -30,11 +31,15 @@ public class DeleteUserAuthorizationAsyncTask extends AsyncTask<String, Integer,
 
     @Override
     protected Boolean doInBackground(String... args) {
+        if (currentSessionData == null || TextUtils.isEmpty(currentSessionData.getId())) {
+            return true;
+        }
         try {
             HttpURLConnection connect = (HttpURLConnection) new URL(activity.getString(R.string.url_disconnect, currentSessionData.getId())).openConnection();
             connect.setRequestMethod("DELETE");
             String authentication = "token " + currentSessionData.getToken();
             connect.setRequestProperty("Authorization", authentication);
+            connect.setRequestProperty("User-Agent", Utils.USER_AGENT);
             connect.connect();
             int responseCode = connect.getResponseCode();
 

@@ -11,9 +11,14 @@ import com.oklab.gitjourney.data.UserSessionData;
 import com.oklab.gitjourney.parsers.Parser;
 import com.oklab.gitjourney.services.FetchHTTPConnectionService;
 import com.oklab.gitjourney.utils.Utils;
+import com.oklab.gitjourney.data.GitHubUserProfileDataEntry;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by olgakuklina on 2017-03-21.
@@ -43,25 +48,55 @@ public class UserProfileAsyncTask<T> extends AsyncTask<String, Void, T> {
 
     @Override
     protected T doInBackground(String... args) {
-        String uri;
+//        String uri;
+//        if (args.length > 0) {
+//            String login = args[0];
+//            uri = context.getString(R.string.url_users, login);
+//        } else {
+//            uri = context.getString(R.string.url_user);
+//        }
+//        FetchHTTPConnectionService connectionFetcher = new FetchHTTPConnectionService(uri, currentSessionData);
+//        HTTPConnectionResult result = connectionFetcher.establishConnection();
+//        Log.v(TAG, "responseCode = " + result.getResponceCode());
+//        Log.v(TAG, "response = " + result.getResult());
+//
+//        try {
+//            JSONObject jsonObject = new JSONObject(result.getResult());
+//            return parser.parse(jsonObject);
+//
+//        } catch (JSONException e) {
+//            Log.e(TAG, "", e);
+//        }
+//        return null;
+        String login;
         if (args.length > 0) {
-            String login = args[0];
-            uri = context.getString(R.string.url_users, login);
+            login = args[0];
         } else {
-            uri = context.getString(R.string.url_user);
+            login = currentSessionData.getLogin();
         }
-        FetchHTTPConnectionService connectionFetcher = new FetchHTTPConnectionService(uri, currentSessionData);
-        HTTPConnectionResult result = connectionFetcher.establishConnection();
-        Log.v(TAG, "responseCode = " + result.getResponceCode());
-        Log.v(TAG, "response = " + result.getResult());
 
-        try {
-            JSONObject jsonObject = new JSONObject(result.getResult());
-            return parser.parse(jsonObject);
+        if ("dummy_user".equals(login)) {
+            // Trả về dữ liệu hồ sơ giả lập cho người dùng hiện tại
+            String name = "Dummy User";
+            String avatarUrl = "https://avatars.githubusercontent.com/u/999?v=4";
+            String profileUri = "https://api.github.com/users/dummy_user";
+            String location = "Ha Noi, Viet Nam";
+            String company = "Dummy Inc.";
+            String blogURI = "https://dummyblog.com";
+            String email = "dummy@example.com";
+            String bio = "This is a mock bio for the main user profile.";
+            int publicRepos = 50;
+            int publicGists = 10;
+            int followers = 100;
+            int following = 80;
+            Calendar createdAt = Calendar.getInstance();
 
-        } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            return (T) new GitHubUserProfileDataEntry(
+                    name, avatarUrl, profileUri, location, login, company, blogURI,
+                    email, bio, publicRepos, publicGists, followers, following, createdAt
+            );
         }
+
         return null;
     }
 

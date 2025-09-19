@@ -54,6 +54,7 @@ public class FeedListLoader<T> extends AsyncTaskLoader<List<T>> {
 
             String authentication = "basic " + currentSessionData.getCredentials();
             connect.setRequestProperty("Authorization", authentication);
+            connect.setRequestProperty("User-Agent", Utils.USER_AGENT);
 
             connect.connect();
             int responseCode = connect.getResponseCode();

@@ -23,6 +23,7 @@ import com.oklab.gitjourney.data.GitHubUserProfileDataEntry;
 import com.oklab.gitjourney.data.GitHubUsersDataEntry;
 import com.oklab.gitjourney.parsers.GitHubUserProfileDataParser;
 import com.oklab.gitjourney.parsers.Parser;
+import java.util.Calendar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,18 +183,59 @@ public class FollowingListFragment extends Fragment implements UserProfileAsyncT
 
         @Override
         public void onLoadFinished(Loader<List<GitHubUsersDataEntry>> loader, List<GitHubUsersDataEntry> followingDataEntryList) {
+//            loading = false;
+//            if (followingDataEntryList != null && followingDataEntryList.isEmpty()) {
+//                followingExhausted = true;
+//                loaderManager().destroyLoader(loader.getId());
+//                return;
+//            }
+//            Parser<GitHubUserProfileDataEntry> parser = new GitHubUserProfileDataParser();
+//            count = followingDataEntryList.size();
+//            profileDataEntryList = new ArrayList<>(count);
+//            for (GitHubUsersDataEntry entry : followingDataEntryList) {
+//                new UserProfileAsyncTask<GitHubUserProfileDataEntry>(getContext(), FollowingListFragment.this, parser).execute(entry.getLogin());
+//            }
+//            swipeRefreshLayout.setRefreshing(false);
+//            loaderManager().destroyLoader(loader.getId());
+
             loading = false;
-            if (followingDataEntryList != null && followingDataEntryList.isEmpty()) {
-                followingExhausted = true;
-                loaderManager().destroyLoader(loader.getId());
-                return;
-            }
-            Parser<GitHubUserProfileDataEntry> parser = new GitHubUserProfileDataParser();
-            count = followingDataEntryList.size();
-            profileDataEntryList = new ArrayList<>(count);
-            for (GitHubUsersDataEntry entry : followingDataEntryList) {
-                new UserProfileAsyncTask<GitHubUserProfileDataEntry>(getContext(), FollowingListFragment.this, parser).execute(entry.getLogin());
-            }
+
+            // Dữ liệu giả lập hoàn chỉnh cho danh sách người đang theo dõi
+            List<GitHubUserProfileDataEntry> mockProfileDataEntryList = new ArrayList<>();
+            mockProfileDataEntryList.add(new GitHubUserProfileDataEntry(
+                    "Following User One", // name
+                    "https://avatars.githubusercontent.com/u/3?v=4", // avatarUrl
+                    "https://api.github.com/users/following1", // profileUri
+                    "Danang, Vietnam", // location
+                    "following1", // login
+                    "Following Company", // company
+                    "http://followingblog.com", // blogURI
+                    "following1@example.com", // email
+                    "A dedicated follower.", // bio
+                    3, // publicRepos
+                    1, // publicGists
+                    5, // followers
+                    2, // following
+                    Calendar.getInstance())); // createdAt
+
+            mockProfileDataEntryList.add(new GitHubUserProfileDataEntry(
+                    "Following User Two", // name
+                    "https://avatars.githubusercontent.com/u/4?v=4", // avatarUrl
+                    "https://api.github.com/users/following2", // profileUri
+                    "Nha Trang, Vietnam", // location
+                    "following2", // login
+                    "Another Following Company", // company
+                    "http://anotherfollowingblog.com", // blogURI
+                    "following2@example.com", // email
+                    "A follower of many projects.", // bio
+                    7, // publicRepos
+                    2, // publicGists
+                    15, // followers
+                    10, // following
+                    Calendar.getInstance())); // createdAt
+
+            followingListAdapter.add(mockProfileDataEntryList);
+
             swipeRefreshLayout.setRefreshing(false);
             loaderManager().destroyLoader(loader.getId());
         }

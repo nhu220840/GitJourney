@@ -55,6 +55,7 @@ public class RepoReadmeDownloadAsyncTask extends AsyncTask<String, Void, String>
 
             String authentication = "basic " + currentSessionData.getCredentials();
             connect.setRequestProperty("Authorization", authentication);
+            connect.setRequestProperty("User-Agent", Utils.USER_AGENT);
             connect.connect();
             int responseCode = connect.getResponseCode();
 

@@ -61,6 +61,7 @@ public class FeedsAsyncTask<T> extends AsyncTask<Integer, Void, List<T>> {
 
             String authentication = "basic " + currentSessionData.getCredentials();
             connect.setRequestProperty("Authorization", authentication);
+            connect.setRequestProperty("User-Agent", Utils.USER_AGENT);
 
             connect.connect();
             int responseCode = connect.getResponseCode();

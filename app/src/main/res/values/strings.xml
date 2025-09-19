@@ -12,7 +12,7 @@
     <string name="login_failed">Login failed</string>
     <string name="sing_in_to_github">Sign in to GitHub</string>
     <string name="user_name_or_email">Please enter your username or email address</string>
-    <string name="password">Please enter your password</string>
+    <string name="password">Please enter your password or personal access token</string>
     <string name="sing_in">Sign in</string>
     <!-- Strings related to nav drawer  -->
     <string name="contribution_activity">Contribution activity</string>

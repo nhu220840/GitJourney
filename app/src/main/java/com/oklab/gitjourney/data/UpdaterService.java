@@ -104,6 +104,7 @@ public class UpdaterService extends IntentService {
             Log.v(TAG, "current session data " + currentSessionData);
             String authentication = "token " + currentSessionData.getToken();
             connect.setRequestProperty("Authorization", authentication);
+            connect.setRequestProperty("User-Agent", Utils.USER_AGENT);
 
             connect.connect();
             int responseCode = connect.getResponseCode();

@@ -23,6 +23,8 @@ import java.util.TimeZone;
 public final class Utils {
     public static final String SHARED_PREF_NAME = "com.ok.lab.GitJourney";
     public static final String DMY_DATE_FORMAT_PATTERN = "dd-MM-yyyy";
+    public static final String USER_AGENT = "GitJourney";
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
