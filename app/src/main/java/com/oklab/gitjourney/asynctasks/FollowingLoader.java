@@ -40,6 +40,9 @@ public class FollowingLoader extends AsyncTaskLoader<List<GitHubUsersDataEntry>>
         String uri = getContext().getString(R.string.url_following, page);
         FetchHTTPConnectionService fetchHTTPConnectionService = new FetchHTTPConnectionService(uri, getContext());
         HTTPConnectionResult result = fetchHTTPConnectionService.establishConnection();
+        if (result == null) {
+            return null;
+        }
         Log.v(TAG, "responseCode = " + result.getResponceCode());
         Log.v(TAG, "result = " + result.getResult());
 

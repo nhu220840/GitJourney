@@ -29,6 +29,9 @@ public class RepositoryFileContentLoader extends AsyncTaskLoader<String> {
     public String loadInBackground() {
         FetchHTTPConnectionService fetchHTTPConnectionService = new FetchHTTPConnectionService(downloadURI, getContext());
         HTTPConnectionResult result = fetchHTTPConnectionService.establishConnection();
+        if (result == null) {
+            return null;
+        }
         Log.v(TAG, "responseCode = " + result.getResponceCode());
         Log.v(TAG, "result = " + result.getResult());
 

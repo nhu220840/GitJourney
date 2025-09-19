@@ -5,9 +5,12 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.data.UserSessionData;
+import com.oklab.gitjourney.mock.MockDataSource;
 import com.oklab.gitjourney.parsers.AtomParser;
+import com.oklab.gitjourney.parsers.WidgetDataAtomParser;
 import com.oklab.gitjourney.utils.Utils;
 
 import org.apache.commons.io.IOUtils;
@@ -49,11 +52,21 @@ public class FeedsAsyncTask<T> extends AsyncTask<Integer, Void, List<T>> {
         SharedPreferences prefs = context.getSharedPreferences(Utils.SHARED_PREF_NAME, 0);
         String sessionDataStr = prefs.getString("userSessionData", null);
         currentSessionData = UserSessionData.createUserSessionDataFromString(sessionDataStr);
+        if (BuildConfig.USE_MOCK_DATA && currentSessionData == null) {
+            currentSessionData = MockDataSource.ensureMockSession(context);
+        }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected List<T> doInBackground(Integer... args) {
         Integer page = args[0];
+        if (BuildConfig.USE_MOCK_DATA) {
+            if (feedAtomParser instanceof WidgetDataAtomParser) {
+                return (List<T>) MockDataSource.getWidgetFeedEntries(page);
+            }
+            return (List<T>) MockDataSource.getFeedEntries(page);
+        }
         try {
             HttpURLConnection connect = (HttpURLConnection) new URL(context.getString(R.string.url_feeds, page)).openConnection();
             connect.setRequestMethod("GET");

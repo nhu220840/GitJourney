@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.data.ContributionDataEntry;
 import com.oklab.gitjourney.data.UserSessionData;
+import com.oklab.gitjourney.mock.MockDataSource;
 import com.oklab.gitjourney.parsers.ContributionsParser;
 import com.oklab.gitjourney.utils.Utils;
 
@@ -46,6 +48,12 @@ public class ContributionsAsyncTask extends AsyncTask<Integer, Void, List<Contri
     @Override
     protected List<ContributionDataEntry> doInBackground(Integer... args) {
         Integer page = args[0];
+        if (BuildConfig.USE_MOCK_DATA) {
+            return MockDataSource.getContributions(currentSessionData != null ? currentSessionData.getLogin() : "mockuser", page);
+        }
+        if (currentSessionData == null) {
+            return null;
+        }
         try {
             HttpURLConnection connect = (HttpURLConnection) new URL(context.getString(R.string.url_events, page, currentSessionData.getLogin())).openConnection();
             connect.setRequestMethod("GET");

@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.adapters.FirebaseAnalyticsWrapper;
 import com.oklab.gitjourney.asynctasks.DeleteUserAuthorizationAsyncTask;
@@ -33,6 +34,7 @@ import com.oklab.gitjourney.fragments.MainViewFragment;
 import com.oklab.gitjourney.parsers.GitHubUserProfileDataParser;
 import com.oklab.gitjourney.parsers.Parser;
 import com.oklab.gitjourney.services.TakeScreenshotService;
+import com.oklab.gitjourney.mock.MockDataSource;
 import com.oklab.gitjourney.utils.Utils;
 
 public class MainActivity extends AppCompatActivity
@@ -62,17 +64,27 @@ public class MainActivity extends AppCompatActivity
         ContributionsByDateListFragment contributionsActivityFragment = ContributionsByDateListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.contrib_fragment, contributionsActivityFragment).commit();
         prefs = this.getSharedPreferences(Utils.SHARED_PREF_NAME, 0);
-        SharedPreferences.Editor editor = prefs.edit();
+//        SharedPreferences.Editor editor = prefs.edit();
 //        String currentSessionData = prefs.getString("userSessionData", null);
-        String mockSessionData = "123;dummy_credentials;dummy_token;dummy_user";
-        editor.putString("userSessionData", mockSessionData);
-        editor.apply();
 //        if (currentSessionData == null) {
 //            Intent intent = new Intent(this, AuthenticationActivity.class);
 //            startActivity(intent);
 //            finish();
 //            return;
-//        }
+
+        String currentSessionData = prefs.getString("userSessionData", null);
+        if (BuildConfig.USE_MOCK_DATA) {
+            if (currentSessionData == null) {
+                MockDataSource.ensureMockSession(this);
+            }
+        } else {
+            if (currentSessionData == null) {
+                Intent intent = new Intent(this, AuthenticationActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            }
+        }
         this.startService(new Intent(this, UpdaterService.class));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

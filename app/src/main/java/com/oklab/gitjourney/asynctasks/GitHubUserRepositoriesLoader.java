@@ -48,6 +48,9 @@ public class GitHubUserRepositoriesLoader extends AsyncTaskLoader<List<ReposData
         }
         FetchHTTPConnectionService fetchHTTPConnectionService = new FetchHTTPConnectionService(uri, getContext());
         HTTPConnectionResult result = fetchHTTPConnectionService.establishConnection();
+        if (result == null) {
+            return null;
+        }
         Log.v(TAG, "responseCode = " + result.getResponceCode());
         Log.v(TAG, "result = " + result.getResult());
 

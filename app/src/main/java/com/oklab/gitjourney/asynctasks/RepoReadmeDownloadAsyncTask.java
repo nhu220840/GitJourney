@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.data.HTTPConnectionResult;
 import com.oklab.gitjourney.data.UserSessionData;
+import com.oklab.gitjourney.mock.MockDataSource;
 import com.oklab.gitjourney.services.FetchHTTPConnectionService;
 import com.oklab.gitjourney.utils.Utils;
 
@@ -43,13 +45,23 @@ public class RepoReadmeDownloadAsyncTask extends AsyncTask<String, Void, String>
         SharedPreferences prefs = context.getSharedPreferences(Utils.SHARED_PREF_NAME, 0);
         String sessionDataStr = prefs.getString("userSessionData", null);
         currentSessionData = UserSessionData.createUserSessionDataFromString(sessionDataStr);
+        if (BuildConfig.USE_MOCK_DATA && currentSessionData == null) {
+            currentSessionData = MockDataSource.ensureMockSession(context);
+        }
     }
 
     @Override
     protected String doInBackground(String... args) {
         String repo = args[0];
         String login = args[1];
+        if (BuildConfig.USE_MOCK_DATA) {
+            String readme = MockDataSource.getFileContent(login, repo, "README.md");
+            return readme != null ? readme : "# " + repo + "\n\nMock README content.";
+        }
         try {
+            if (currentSessionData == null) {
+                return null;
+            }
             HttpURLConnection connect = (HttpURLConnection) new URL(context.getString(R.string.url_repo_readme, login, repo)).openConnection();
             connect.setRequestMethod("GET");
 

@@ -14,8 +14,10 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.adapters.FirebaseAnalyticsWrapper;
+import com.oklab.gitjourney.mock.MockDataSource;
 import com.oklab.gitjourney.parsers.ContributionsParser;
 import com.oklab.gitjourney.utils.Utils;
 
@@ -49,11 +51,18 @@ public class UpdaterService extends IntentService {
         SharedPreferences prefs = this.getSharedPreferences(Utils.SHARED_PREF_NAME, 0);
         String sessionDataStr = prefs.getString("userSessionData", null);
         currentSessionData = UserSessionData.createUserSessionDataFromString(sessionDataStr);
+        if (BuildConfig.USE_MOCK_DATA && currentSessionData == null) {
+            currentSessionData = MockDataSource.ensureMockSession(this);
+        }
         firebaseAnalytics = new FirebaseAnalyticsWrapper(this);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (BuildConfig.USE_MOCK_DATA) {
+            populateWithMockData();
+            return;
+        }
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         if (ni == null || !ni.isConnected()) {
@@ -82,6 +91,40 @@ public class UpdaterService extends IntentService {
                 values.put(ActivityItemsContract.Items.DESCRIPTION, entry.getDescription());
                 values.put(ActivityItemsContract.Items.TITLE, entry.getTitle());
                 values.put(ActivityItemsContract.Items.AUTHOR_ID, currentSessionData.getLogin());
+                values.put(ActivityItemsContract.Items.PUBLISHED_DATE, entry.getDate().getTimeInMillis());
+                cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
+            }
+        }
+        try {
+            this.getContentResolver().applyBatch(ActivityItemsContract.CONTENT_AUTHORITY, cpo);
+        } catch (RemoteException | OperationApplicationException e) {
+            Log.e(UpdaterService.TAG, "Error updating content.", e);
+            Bundle bundle = new Bundle();
+            bundle.putString(TAG, Utils.getStackTrace(e));
+            firebaseAnalytics.logEvent(fbAEvent, bundle);
+        }
+    }
+
+    private void populateWithMockData() {
+        ArrayList<ContentProviderOperation> cpo = new ArrayList<>();
+        Uri dirUri = ActivityItemsContract.Items.buildDirUri();
+        cpo.add(ContentProviderOperation.newDelete(dirUri).build());
+
+        int pageIndex = 1;
+        String login = currentSessionData != null ? currentSessionData.getLogin() : "mockuser";
+        while (true) {
+            List<ContributionDataEntry> contributionsDataList = MockDataSource.getContributions(login, pageIndex++);
+            if (contributionsDataList == null || contributionsDataList.isEmpty()) {
+                break;
+            }
+            for (ContributionDataEntry entry : contributionsDataList) {
+                ContentValues values = new ContentValues();
+                values.put(ActivityItemsContract.Items._ID, entry.getEntryId());
+                values.put(ActivityItemsContract.Items.ENTRY_URL, entry.getEntryURL());
+                values.put(ActivityItemsContract.Items.ACTION_TYPE, entry.getActionType().name());
+                values.put(ActivityItemsContract.Items.DESCRIPTION, entry.getDescription());
+                values.put(ActivityItemsContract.Items.TITLE, entry.getTitle());
+                values.put(ActivityItemsContract.Items.AUTHOR_ID, login);
                 values.put(ActivityItemsContract.Items.PUBLISHED_DATE, entry.getDate().getTimeInMillis());
                 cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
             }

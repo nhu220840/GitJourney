@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.activities.AuthenticationActivity;
 import com.oklab.gitjourney.data.UserSessionData;
@@ -31,6 +32,9 @@ public class DeleteUserAuthorizationAsyncTask extends AsyncTask<String, Integer,
 
     @Override
     protected Boolean doInBackground(String... args) {
+        if (BuildConfig.USE_MOCK_DATA) {
+            return true;
+        }
         if (currentSessionData == null || TextUtils.isEmpty(currentSessionData.getId())) {
             return true;
         }

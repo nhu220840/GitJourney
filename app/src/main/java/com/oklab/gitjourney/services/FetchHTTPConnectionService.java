@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.data.HTTPConnectionResult;
 import com.oklab.gitjourney.data.UserSessionData;
+import com.oklab.gitjourney.mock.MockDataSource;
+import com.oklab.gitjourney.mock.MockHttpDispatcher;
 import com.oklab.gitjourney.utils.Utils;
 
 import org.apache.commons.io.IOUtils;
@@ -33,11 +36,26 @@ public class FetchHTTPConnectionService {
         this.uri = uri;
         SharedPreferences prefs = context.getSharedPreferences(Utils.SHARED_PREF_NAME, 0);
         String sessionDataStr = prefs.getString("userSessionData", null);
-        currentSessionData = UserSessionData.createUserSessionDataFromString(sessionDataStr);
+//        currentSessionData = UserSessionData.createUserSessionDataFromString(sessionDataStr);
+        UserSessionData sessionData = UserSessionData.createUserSessionDataFromString(sessionDataStr);
+        if (BuildConfig.USE_MOCK_DATA && sessionData == null) {
+            sessionData = MockDataSource.ensureMockSession(context);
+        }
+        currentSessionData = sessionData;
     }
 
     public HTTPConnectionResult establishConnection() {
         try {
+            if (BuildConfig.USE_MOCK_DATA) {
+                HTTPConnectionResult result = MockHttpDispatcher.dispatch(uri, currentSessionData);
+                if (result != null) {
+                    return result;
+                }
+            }
+            if (currentSessionData == null) {
+                Log.w(TAG, "No session data available for network request in non-mock mode");
+                return null;
+            }
             HttpURLConnection connect = (HttpURLConnection) new URL(uri).openConnection();
             connect.setRequestMethod("GET");
 

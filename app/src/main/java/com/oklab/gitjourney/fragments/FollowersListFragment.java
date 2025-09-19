@@ -24,7 +24,6 @@ import com.oklab.gitjourney.data.GitHubUsersDataEntry;
 import com.oklab.gitjourney.parsers.GitHubUserProfileDataParser;
 import com.oklab.gitjourney.parsers.Parser;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import java.util.List;
 
@@ -185,42 +184,23 @@ public class FollowersListFragment extends Fragment implements UserProfileAsyncT
         @Override
         public void onLoadFinished(Loader<List<GitHubUsersDataEntry>> loader, List<GitHubUsersDataEntry> followersDataEntryList) {
             loading = false;
-
-            // Dữ liệu giả lập hoàn chỉnh cho danh sách người theo dõi
-            List<GitHubUserProfileDataEntry> mockProfileDataEntryList = new ArrayList<>();
-            mockProfileDataEntryList.add(new GitHubUserProfileDataEntry(
-                    "Mock User One", // name
-                    "https://avatars.githubusercontent.com/u/1?v=4", // avatarUrl
-                    "https://api.github.com/users/mockuser1", // profileUri
-                    "Hanoi, Vietnam", // location
-                    "mockuser1", // login
-                    "Mock Company", // company
-                    "http://mockblog.com", // blogURI
-                    "mock1@example.com", // email
-                    "A developer from Mock Company.", // bio
-                    5, // publicRepos
-                    0, // publicGists
-                    10, // followers
-                    8, // following
-                    Calendar.getInstance())); // createdAt
-
-            mockProfileDataEntryList.add(new GitHubUserProfileDataEntry(
-                    "Mock User Two", // name
-                    "https://avatars.githubusercontent.com/u/2?v=4", // avatarUrl
-                    "https://api.github.com/users/mockuser2", // profileUri
-                    "Ho Chi Minh, Vietnam", // location
-                    "mockuser2", // login
-                    "Another Mock Company", // company
-                    "http://anothermockblog.com", // blogURI
-                    "mock2@example.com", // email
-                    "This is a sample bio.", // bio
-                    12, // publicRepos
-                    1, // publicGists
-                    25, // followers
-                    20, // following
-                    Calendar.getInstance())); // createdAt
-
-            followersListAdapter.add(mockProfileDataEntryList);
+            if (followersDataEntryList != null && followersDataEntryList.isEmpty()) {
+                followersExhausted = true;
+                swipeRefreshLayout.setRefreshing(false);
+                loaderManager().destroyLoader(loader.getId());
+                return;
+            }
+            if (followersDataEntryList == null) {
+                swipeRefreshLayout.setRefreshing(false);
+                loaderManager().destroyLoader(loader.getId());
+                return;
+            }
+            Parser<GitHubUserProfileDataEntry> parser = new GitHubUserProfileDataParser();
+            count = followersDataEntryList.size();
+            profileDataEntryList = new ArrayList<>(count);
+            for (GitHubUsersDataEntry entry : followersDataEntryList) {
+                new UserProfileAsyncTask<GitHubUserProfileDataEntry>(getContext(), FollowersListFragment.this, parser).execute(entry.getLogin());
+            }
 
             swipeRefreshLayout.setRefreshing(false);
             loaderManager().destroyLoader(loader.getId());

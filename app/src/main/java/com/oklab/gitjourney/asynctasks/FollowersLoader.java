@@ -14,7 +14,6 @@ import com.oklab.gitjourney.services.FetchHTTPConnectionService;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,11 +51,23 @@ public class FollowersLoader extends AsyncTaskLoader<List<GitHubUsersDataEntry>>
 //            Log.e(TAG, "", e);
 //        }
 //        return null;
-        Log.v(TAG, "Returning mock data instead of calling API.");
+        String uri = getContext().getString(R.string.url_followers, page);
+        FetchHTTPConnectionService fetchHTTPConnectionService = new FetchHTTPConnectionService(uri, getContext());
+        HTTPConnectionResult result = fetchHTTPConnectionService.establishConnection();
+        if (result == null) {
+            return null;
+        }
+        Log.v(TAG, "responseCode = " + result.getResponceCode());
+        Log.v(TAG, "result = " + result.getResult());
 
-        // Tạo một danh sách rỗng để dừng quá trình tải dữ liệu tiếp theo
-        // nếu bạn chỉ muốn xem giao diện mà không có dữ liệu thực.
-        return new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(result.getResult());
+            return new FollowersParser().parse(jsonArray);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return null;
     }
 }
 

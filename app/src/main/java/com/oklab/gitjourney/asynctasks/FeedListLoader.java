@@ -5,8 +5,10 @@ import android.content.SharedPreferences;
 import androidx.loader.content.AsyncTaskLoader;
 import android.util.Log;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.data.UserSessionData;
+import com.oklab.gitjourney.mock.MockDataSource;
 import com.oklab.gitjourney.parsers.AtomParser;
 import com.oklab.gitjourney.utils.Utils;
 
@@ -38,6 +40,9 @@ public class FeedListLoader<T> extends AsyncTaskLoader<List<T>> {
         SharedPreferences prefs = context.getSharedPreferences(Utils.SHARED_PREF_NAME, 0);
         String sessionDataStr = prefs.getString("userSessionData", null);
         currentSessionData = UserSessionData.createUserSessionDataFromString(sessionDataStr);
+        if (BuildConfig.USE_MOCK_DATA && currentSessionData == null) {
+            currentSessionData = MockDataSource.ensureMockSession(context);
+        }
     }
 
     @Override
@@ -47,7 +52,15 @@ public class FeedListLoader<T> extends AsyncTaskLoader<List<T>> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<T> loadInBackground() {
+        if (BuildConfig.USE_MOCK_DATA) {
+            return (List<T>) MockDataSource.getFeedEntries(page);
+        }
+        if (currentSessionData == null) {
+            Log.w(TAG, "Session data missing while fetching feeds");
+            return null;
+        }
         try {
             HttpURLConnection connect = (HttpURLConnection) new URL(context.getString(R.string.url_feeds, page)).openConnection();
             connect.setRequestMethod("GET");

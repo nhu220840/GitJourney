@@ -39,6 +39,9 @@ public class RepositoriesLoader extends AsyncTaskLoader<List<ReposDataEntry>> {
         String uri = getContext().getString(R.string.url_repos, page);
         FetchHTTPConnectionService fetchHTTPConnectionService = new FetchHTTPConnectionService(uri, getContext());
         HTTPConnectionResult result = fetchHTTPConnectionService.establishConnection();
+        if (result == null) {
+            return null;
+        }
         Log.v(TAG, "responseCode = " + result.getResponceCode());
         Log.v(TAG, "result = " + result.getResult());
 

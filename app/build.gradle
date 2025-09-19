@@ -37,10 +37,16 @@ android {
             shrinkResources true
             proguardFiles(getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro')
             signingConfig signingConfigs.getByName("config")
+            buildConfigField 'boolean', 'USE_MOCK_DATA', 'false'
         }
         debug {
             minifyEnabled false
+            buildConfigField 'boolean', 'USE_MOCK_DATA', 'true'
         }
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     compileOptions {

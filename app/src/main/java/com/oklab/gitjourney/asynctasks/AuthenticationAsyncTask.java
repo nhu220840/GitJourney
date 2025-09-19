@@ -8,9 +8,11 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.oklab.gitjourney.BuildConfig;
 import com.oklab.gitjourney.R;
 import com.oklab.gitjourney.activities.MainActivity;
 import com.oklab.gitjourney.data.UserSessionData;
+import com.oklab.gitjourney.mock.MockDataSource;
 import com.oklab.gitjourney.utils.Utils;
 
 import org.apache.commons.io.IOUtils;
@@ -45,6 +47,10 @@ public class AuthenticationAsyncTask extends AsyncTask<String, Integer, UserSess
     @Override
     protected UserSessionData doInBackground(String... args) {
         try {
+            if (BuildConfig.USE_MOCK_DATA) {
+                String login = (args != null && args.length >= 1) ? args[0] : "mockuser";
+                return MockDataSource.createSessionForLogin(login);
+            }
             if (args != null && args.length == 1) {
                 return authenticateWithPersonalAccessToken(args[0]);
             } else if (args != null && args.length >= 2) {
